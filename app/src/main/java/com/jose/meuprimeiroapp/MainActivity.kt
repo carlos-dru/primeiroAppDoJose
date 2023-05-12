@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
         var senha = findViewById<EditText>(senha)
         var mensagemLogin = findViewById<TextView>(mensagemLogin)
         botao.setOnClickListener {
-            if (usuario.text.toString() != "Drumond" || senha.text.toString() != "8009"){
+            if (usuario.text.toString() != "Drumond1" || senha.text.toString() != "8009"){
                 mensagemLogin.isVisible = true
                 mensagemLogin.text = "Usuário ou senha incorretos."
             }
