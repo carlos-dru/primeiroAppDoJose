@@ -1,1 +1,1 @@
-APP criado para aprender um pouquinho de desenvolvimento Android :).
+APP criado para aprender um pouquinho de desenvolvimento Android :)
