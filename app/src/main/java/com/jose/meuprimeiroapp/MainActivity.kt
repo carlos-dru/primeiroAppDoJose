@@ -27,27 +27,21 @@ class MainActivity : AppCompatActivity() {
         var mensagemLogin = findViewById<TextView>(mensagemLogin)
         var auth = Firebase.auth!!
         botao.setOnClickListener {
-            /*if (usuario.text.toString() != "José" || senha.text.toString() != "8009"){
+            if (usuario.text.toString().isNullOrEmpty() || senha.text.toString().isNullOrEmpty()){
                 mensagemLogin.isVisible = true
                 mensagemLogin.text = "Usuário ou senha incorretos."
+            }else {
+                auth.signInWithEmailAndPassword(usuario.text.toString(), senha.text.toString())
+                    .addOnSuccessListener {
+                        val home = Intent(this, SecondActivity::class.java)
+                        home.putExtra("emailUsuario", usuario.text.toString())
+                        startActivity(home)
+                    }
+                    .addOnFailureListener {
+                        mensagemLogin.isVisible = true
+                        mensagemLogin.text = "Usuário ou senha incorretos."
+                    }
             }
-            else {
-               // mensagemLogin.isVisible = true
-               // mensagemLogin.text = "Seja bem-vindo, Zekão!"
-                val home = Intent(this, SecondActivity::class.java)
-                home.putExtra("nomeUsuario", usuario.text.toString())
-                startActivity(home)
-            }*/
-            auth.signInWithEmailAndPassword(usuario.text.toString(), senha.text.toString())
-                .addOnSuccessListener {
-                    val home = Intent(this, SecondActivity::class.java)
-                    home.putExtra("emailUsuario", usuario.text.toString())
-                    startActivity(home)
-                }
-                .addOnFailureListener {
-                    mensagemLogin.isVisible = true
-                    mensagemLogin.text = "Usuário ou senha incorretos."
-                }
         }
     }
 }
