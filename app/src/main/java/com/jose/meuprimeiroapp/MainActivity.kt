@@ -21,13 +21,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        var botao = findViewById<Button>(botaoLogin)
+        var botaoLogin = findViewById<Button>(botaoLogin)
+        var botaoCadastrar = findViewById<Button>(R.id.botaoCadastrar)
         var usuario = findViewById<EditText>(usuario)
         var senha = findViewById<EditText>(senha)
         var mensagemLogin = findViewById<TextView>(mensagemLogin)
         var auth = Firebase.auth!!
-        botao.setOnClickListener {
-          if (usuario.text.toString().isNullOrEmpty() || senha.text.toString().isNullOrEmpty()){
+        botaoLogin.setOnClickListener {
+            if (usuario.text.toString().isNullOrEmpty() || senha.text.toString().isNullOrEmpty()){
                 mensagemLogin.isVisible = true
                 mensagemLogin.text = "Usuário ou senha incorretos."
             }else {
@@ -40,6 +41,22 @@ class MainActivity : AppCompatActivity() {
                     .addOnFailureListener {
                         mensagemLogin.isVisible = true
                         mensagemLogin.text = "Usuário ou senha incorretos."
+                    }
+            }
+        }
+        botaoCadastrar.setOnClickListener {
+            if (usuario.text.toString().isNullOrEmpty() || senha.text.toString().isNullOrEmpty()){
+                mensagemLogin.isVisible = true
+                mensagemLogin.text = "Por favor, preencha seu e-mail e senha."
+            }else {
+                auth.createUserWithEmailAndPassword(usuario.text.toString(), senha.text.toString())
+                    .addOnSuccessListener {
+                        mensagemLogin.isVisible = true
+                        mensagemLogin.text = "Usuário cadastrado com sucesso!"
+                    }
+                    .addOnFailureListener{
+                        mensagemLogin.isVisible = true
+                        mensagemLogin.text = "Ocorreu um erro ao cadastrar o usuário."
                     }
             }
         }
