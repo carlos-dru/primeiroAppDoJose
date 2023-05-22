@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         var mensagemLogin = findViewById<TextView>(mensagemLogin)
         var auth = Firebase.auth!!
         botao.setOnClickListener {
-            if (usuario.text.toString().isNullOrEmpty() || senha.text.toString().isNullOrEmpty()){
+          if (usuario.text.toString().isNullOrEmpty() || senha.text.toString().isNullOrEmpty()){
                 mensagemLogin.isVisible = true
                 mensagemLogin.text = "Usuário ou senha incorretos."
             }else {
