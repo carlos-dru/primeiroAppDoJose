@@ -11,16 +11,11 @@ class SecondActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_second)
         var textoBoasVindas = findViewById<TextView>(R.id.mensagemSucesso)
-        if (getIntent().hasExtra("nomeUsuario")){
-            val extras = intent.extras!!
-            var nomeUsuario = extras.getString("nomeUsuario").toString()
-            textoBoasVindas.text = plus(textoBoasVindas.text.toString(), " $nomeUsuario!")
-        }
+        val extras = intent.extras!!
+        var nomeUsuario = extras.getString("emailUsuario").toString()
+        var uidUsuario = extras.getString("uidUsuario").toString()
+        textoBoasVindas.text = textoBoasVindas.text.toString() + " $nomeUsuario!"// + " uid: $uidUsuario"
+
 
     }
-}
-
-private fun plus(s1: String, s2: String): String? {
-    return s1 + s2
-    //Atualizando...
 }
