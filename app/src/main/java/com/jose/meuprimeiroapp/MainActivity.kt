@@ -1,5 +1,7 @@
 package com.jose.meuprimeiroapp
 
+import android.app.AlertDialog
+import android.content.Context
 import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -25,12 +27,10 @@ class MainActivity : AppCompatActivity() {
         var botaoCadastrar = findViewById<Button>(R.id.botaoCadastrar)
         var usuario = findViewById<EditText>(usuario)
         var senha = findViewById<EditText>(senha)
-        var mensagemLogin = findViewById<TextView>(mensagemLogin)
         var auth = Firebase.auth!!
         botaoLogin.setOnClickListener {
             if (usuario.text.toString().isNullOrEmpty() || senha.text.toString().isNullOrEmpty()){
-                mensagemLogin.isVisible = true
-                mensagemLogin.text = "Usuário ou senha incorretos."
+                exibirAlertaErroLogin(this, "Usuário ou senha incorretos.")
             }else {
                 auth.signInWithEmailAndPassword(usuario.text.toString(), senha.text.toString())
                     .addOnSuccessListener {
@@ -39,26 +39,36 @@ class MainActivity : AppCompatActivity() {
                         startActivity(home)
                     }
                     .addOnFailureListener {
-                        mensagemLogin.isVisible = true
-                        mensagemLogin.text = "Usuário ou senha incorretos."
+                        exibirAlertaErroLogin(this, "Usuário ou senha incorretos.")
                     }
             }
         }
         botaoCadastrar.setOnClickListener {
             if (usuario.text.toString().isNullOrEmpty() || senha.text.toString().isNullOrEmpty()){
-                mensagemLogin.isVisible = true
-                mensagemLogin.text = "Por favor, preencha seu e-mail e senha."
+                exibirAlertaErroLogin(this, "Por favor, preencha seu e-mail e senha.")
             }else {
                 auth.createUserWithEmailAndPassword(usuario.text.toString(), senha.text.toString())
                     .addOnSuccessListener {
-                        mensagemLogin.isVisible = true
-                        mensagemLogin.text = "Usuário cadastrado com sucesso!"
+                        exibirAlertaErroLogin(this, "Usuário cadastrado com sucesso!")
                     }
                     .addOnFailureListener{
-                        mensagemLogin.isVisible = true
-                        mensagemLogin.text = "Ocorreu um erro ao cadastrar o usuário."
+                        exibirAlertaErroLogin(this, "Ocorreu um erro ao cadastrar o usuário.")
                     }
             }
         }
     }
+
+    fun exibirAlertaErroLogin(context: Context, texto: String) {
+        val alertDialog = AlertDialog.Builder(context)
+            .setTitle("Alerta")
+            .setMessage(texto)
+            .setPositiveButton("OK") { dialog, _ ->
+                // Ação a ser executada ao pressionar o botão "OK"
+                dialog.dismiss()
+            }
+            .create()
+
+        alertDialog.show()
+    }
+
 }
