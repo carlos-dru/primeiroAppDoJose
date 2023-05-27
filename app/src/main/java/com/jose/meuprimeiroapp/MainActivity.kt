@@ -8,57 +8,63 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
-import androidx.core.view.isVisible
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.jose.meuprimeiroapp.R.id.botaoLogin
 import com.jose.meuprimeiroapp.R.id.usuario
-import com.jose.meuprimeiroapp.R.id.mensagemLogin
 import com.jose.meuprimeiroapp.R.id.senha
+import com.google.firebase.database.*
+import com.google.firebase.database.ktx.database
 
 class MainActivity : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         var botaoLogin = findViewById<Button>(botaoLogin)
         var botaoCadastrar = findViewById<Button>(R.id.botaoCadastrar)
         var usuario = findViewById<EditText>(usuario)
         var senha = findViewById<EditText>(senha)
         var auth = Firebase.auth!!
+        val database: FirebaseDatabase = FirebaseDatabase.getInstance()
+        val ref: DatabaseReference = database.reference.child("root/usuarios")
+
+
+
         botaoLogin.setOnClickListener {
             if (usuario.text.toString().isNullOrEmpty() || senha.text.toString().isNullOrEmpty()){
-                exibirAlertaErroLogin(this, "Usuário ou senha incorretos.")
+                exibirAlerta(this, "Usuário ou senha incorretos.")
             }else {
                 auth.signInWithEmailAndPassword(usuario.text.toString(), senha.text.toString())
                     .addOnSuccessListener {
                         val home = Intent(this, SecondActivity::class.java)
                         home.putExtra("emailUsuario", usuario.text.toString())
+                        home.putExtra("uidUsuario", auth.currentUser?.uid.toString())
                         startActivity(home)
                     }
                     .addOnFailureListener {
-                        exibirAlertaErroLogin(this, "Usuário ou senha incorretos.")
+                        exibirAlerta(this, "Usuário ou senha incorretos.")
                     }
             }
         }
         botaoCadastrar.setOnClickListener {
             if (usuario.text.toString().isNullOrEmpty() || senha.text.toString().isNullOrEmpty()){
-                exibirAlertaErroLogin(this, "Por favor, preencha seu e-mail e senha.")
+                exibirAlerta(this, "Por favor, preencha seu e-mail e senha.")
             }else {
                 auth.createUserWithEmailAndPassword(usuario.text.toString(), senha.text.toString())
                     .addOnSuccessListener {
-                        exibirAlertaErroLogin(this, "Usuário cadastrado com sucesso!")
+                        exibirAlerta(this, "Usuário cadastrado com sucesso!")
+                        var idNovo = auth.currentUser?.uid.toString()
+                        exibirAlerta(this, "Novo id: $idNovo")
                     }
                     .addOnFailureListener{
-                        exibirAlertaErroLogin(this, "Ocorreu um erro ao cadastrar o usuário.")
+                        exibirAlerta(this, "Ocorreu um erro ao cadastrar o usuário.")
                     }
             }
         }
     }
 
-    fun exibirAlertaErroLogin(context: Context, texto: String) {
+    fun exibirAlerta(context: Context, texto: String) {
         val alertDialog = AlertDialog.Builder(context)
             .setTitle("Alerta")
             .setMessage(texto)
