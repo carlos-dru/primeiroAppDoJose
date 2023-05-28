@@ -1,29 +1,27 @@
 package com.jose.meuprimeiroapp
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
-import android.annotation.SuppressLint
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
-import com.jose.meuprimeiroapp.R.id.botaoLogin
-import com.jose.meuprimeiroapp.R.id.usuario
-import com.jose.meuprimeiroapp.R.id.senha
-import com.google.firebase.database.*
 
-class MainActivity : AppCompatActivity() {
+class cadastroActivity : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        var botaoLogin = findViewById<Button>(botaoLogin)
+        var botaoLogin = findViewById<Button>(R.id.botaoLogin)
         var botaoCadastrar = findViewById<Button>(R.id.botaoCadastrar)
-        var usuario = findViewById<EditText>(usuario)
-        var senha = findViewById<EditText>(senha)
+        var usuario = findViewById<EditText>(R.id.usuario)
+        var senha = findViewById<EditText>(R.id.senha)
         var auth = Firebase.auth!!
         val database: FirebaseDatabase = FirebaseDatabase.getInstance()
         val ref: DatabaseReference = database.reference.child("root/usuarios")
