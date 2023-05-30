@@ -47,17 +47,22 @@ class homeActivity : AppCompatActivity() {
 
         //Depositando na conta
         botaoDepositar.setOnClickListener {
-            exibirAlertaComCampoValor(
-                context = this,
-                sucessoCallback = { valor ->
-                    exibirAlerta(this, valor.toString())
-                }
-            )
             ref.child("saldo").addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     var saldoAnterior: Double? = dataSnapshot.getValue(Double::class.java)
                     if (saldoAnterior != null) {
-                        //depositar(ref.child("saldo"), saldoAnterior, 30.0)
+                        exibirPerguntaComCampoDeValor(this@homeActivity, "Digite o valor do depósito:", "Alerta",
+                            callbackSucesso = { valor ->
+                                if (valor == 0.0){
+                                    exibirAlerta(this@homeActivity, "Por favor, digite um número maior que zero.")
+                                } else {
+                                    depositar(ref.child("saldo"), saldoAnterior, valor)
+                                    exibirAlerta(
+                                        this@homeActivity,
+                                        "Depósito realizado com sucesso!"
+                                    )
+                                }
+                            })
                     }
                 }
                 override fun onCancelled(error: DatabaseError) {
@@ -81,7 +86,7 @@ class homeActivity : AppCompatActivity() {
         path.setValue(saldoAtual + valorDeposito)
     }
 
-    /*fun exibirPerguntaComCampoDeValor(context: Context, texto: String, titulo: String, callbackSucesso: (Double) -> Unit) {
+    fun exibirPerguntaComCampoDeValor(context: Context, texto: String, titulo: String, callbackSucesso: (Double) -> Unit) {
         val alertDialog = AlertDialog.Builder(context)
             .setTitle(titulo)
             .setMessage(texto)
@@ -93,7 +98,11 @@ class homeActivity : AppCompatActivity() {
             .setPositiveButton("Depositar") { dialog, _ ->
                 // Ação a ser executada ao pressionar o botão "OK"
                 dialog.dismiss()
-                callbackSucesso(campoValor.text.toString().toDouble())
+                if (campoValor.text.toString().isNullOrEmpty()){
+                    callbackSucesso(0.0)
+                } else {
+                    callbackSucesso(campoValor.text.toString().toDouble())
+                }
             }
             .setNegativeButton("Cancelar"){dialog, _ ->
                 dialog.dismiss()
@@ -101,7 +110,7 @@ class homeActivity : AppCompatActivity() {
             .create()
         alertDialog.show()
     }
-     */
+
 
     fun exibirAlertaComCampoValor(
         context: Context,
