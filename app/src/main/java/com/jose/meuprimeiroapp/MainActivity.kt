@@ -54,11 +54,10 @@ class MainActivity : AppCompatActivity() {
                     .addOnSuccessListener {
                         exibirAlerta(this, "Usuário cadastrado com sucesso!")
                         var idNovo = auth.currentUser?.uid.toString()
-                        //exibirAlerta(this, "Novo id: $idNovo")
                         val refNovoUsuario: DatabaseReference = ref.child(idNovo)
                         val novoUsuario: HashMap<String, Any> = HashMap()
-                        novoUsuario["nome"] = "Teste123"
-                        novoUsuario["saldo"] = 100
+                        novoUsuario["email"] = usuario.text.toString()
+                        novoUsuario["saldo"] = 0.0
                         refNovoUsuario.setValue(novoUsuario)
                             .addOnSuccessListener {
                                 exibirAlerta(this, "Usuário cadastrado com sucesso!")
