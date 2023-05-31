@@ -7,20 +7,42 @@
     android:background="#0C0202">
 
     <Button
+        android:id="@+id/botaoSacar"
+        android:layout_width="110dp"
+        android:layout_height="46dp"
+        android:layout_marginStart="150dp"
+        android:layout_marginTop="21dp"
+        android:layout_marginEnd="151dp"
+        android:layout_marginBottom="386dp"
+        android:backgroundTint="#59E773"
+        android:text="Sacar"
+        android:textColor="#000000"
+        android:textColorHighlight="#59E773"
+        android:textColorHint="#000000"
+        android:textColorLink="#59E773"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/botaoDepositar"
+        tools:ignore="MissingConstraints"
+        tools:visibility="visible" />
+
+
+    <Button
         android:id="@+id/botaoDepositar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="150dp"
         android:layout_marginTop="51dp"
         android:layout_marginEnd="151dp"
-        android:layout_marginBottom="453dp"
+        android:layout_marginBottom="21dp"
         android:backgroundTint="#59E773"
         android:text="Depositar"
         android:textColor="#000000"
         android:textColorHighlight="#59E773"
         android:textColorHint="#000000"
         android:textColorLink="#59E773"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/botaoSacar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mensagemSaldo"
@@ -29,12 +51,12 @@
 
     <TextView
         android:id="@+id/mensagemBoasVindas"
-        android:layout_width="350dp"
-        android:layout_height="52dp"
+        android:layout_width="348dp"
+        android:layout_height="71dp"
         android:layout_marginStart="30dp"
         android:layout_marginTop="65dp"
         android:layout_marginEnd="31dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="6dp"
         android:text="Seja bem-vindo,"
         android:textColor="#FFC6C6C6"
         android:textSize="20sp"
@@ -48,12 +70,14 @@
         android:layout_width="350dp"
         android:layout_height="52dp"
         android:layout_marginStart="30dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="31dp"
-        android:layout_marginBottom="552dp"
+        android:layout_marginBottom="540dp"
         android:text="Seu saldo atual é: "
         android:textColor="#FFC6C6C6"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mensagemBoasVindas" />
 </androidx.constraintlayout.widget.ConstraintLayout>

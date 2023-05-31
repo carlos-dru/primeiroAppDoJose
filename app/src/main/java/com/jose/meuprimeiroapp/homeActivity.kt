@@ -20,41 +20,52 @@ class homeActivity : AppCompatActivity() {
         var textoBoasVindas = findViewById<TextView>(R.id.mensagemBoasVindas)
         var mensagemSaldo = findViewById<TextView>(R.id.mensagemSaldo)
         var botaoDepositar = findViewById<Button>(R.id.botaoDepositar)
+        var botaoSacar = findViewById<Button>(R.id.botaoSacar)
         val extras = intent.extras!!
         var uidUsuario = extras.getString("uidUsuario").toString()
         val database: FirebaseDatabase = FirebaseDatabase.getInstance()
         val ref: DatabaseReference = database.reference.child("root/usuarios/$uidUsuario")
-        ref.child("nome").addListenerForSingleValueEvent(object : ValueEventListener {
+        //Lendo o e-mail do usuário no banco
+        ref.child("email").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val nome: String? = dataSnapshot.getValue(String::class.java)
-                if (nome != null) {
-                    textoBoasVindas.text = textoBoasVindas.text.toString() + " $nome!"
+                val email: String? = dataSnapshot.getValue(String::class.java)
+                if (email != null) {
+                    textoBoasVindas.text = textoBoasVindas.text.toString() + " $email!"
                 }
             }
+
             override fun onCancelled(error: DatabaseError) {
             }
         })
+        //Lendo o saldo do usuário no banco
         ref.child("saldo").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 var saldo: Double? = dataSnapshot.getValue(Double::class.java)
                 if (saldo != null) {
-                    mensagemSaldo.text = mensagemSaldo.text.toString() + " R$$saldo"
+                    mensagemSaldo.text = mensagemSaldo.text.toString() + " R$ $saldo"
                 }
             }
+
             override fun onCancelled(error: DatabaseError) {
             }
         })
 
-        //Depositando na conta
+        //Realizando depósito
         botaoDepositar.setOnClickListener {
             ref.child("saldo").addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     var saldoAnterior: Double? = dataSnapshot.getValue(Double::class.java)
                     if (saldoAnterior != null) {
-                        exibirPerguntaComCampoDeValor(this@homeActivity, "Digite o valor do depósito:", "Alerta",
+                        exibirPerguntaComCampoDeValor(this@homeActivity,
+                            "Digite o valor do depósito:",
+                            "Alerta",
+                            "Depositar",
                             callbackSucesso = { valor ->
-                                if (valor == 0.0){
-                                    exibirAlerta(this@homeActivity, "Por favor, digite um número maior que zero.")
+                                if (valor == 0.0) {
+                                    exibirAlerta(
+                                        this@homeActivity,
+                                        "Por favor, digite um número maior que zero."
+                                    )
                                 } else {
                                     depositar(ref.child("saldo"), saldoAnterior, valor)
                                     exibirAlerta(
@@ -65,6 +76,7 @@ class homeActivity : AppCompatActivity() {
                             })
                     }
                 }
+
                 override fun onCancelled(error: DatabaseError) {
                 }
             })
@@ -76,6 +88,57 @@ class homeActivity : AppCompatActivity() {
                         mensagemSaldo.text = "Seu saldo atual é: R$ $saldoAtual"
                     }
                 }
+
+                override fun onCancelled(error: DatabaseError) {
+                }
+            })
+        }
+        //Realizando saque
+        botaoSacar.setOnClickListener {
+            ref.child("saldo").addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    var saldoAnterior: Double? = dataSnapshot.getValue(Double::class.java)
+                    if (saldoAnterior != null) {
+                        exibirPerguntaComCampoDeValor(this@homeActivity,
+                            "Digite o valor do saque:",
+                            "Alerta",
+                            "Sacar",
+                            callbackSucesso = { valor ->
+                                if (valor == 0.0) {
+                                    exibirAlerta(
+                                        this@homeActivity,
+                                        "Por favor, digite um número maior que zero."
+                                    )
+                                } else {
+                                    var saqueRealizado: Boolean = sacar(ref.child("saldo"), saldoAnterior, valor)
+                                    if (saqueRealizado){
+                                        exibirAlerta(
+                                            this@homeActivity,
+                                            "Saque realizado com sucesso!"
+                                        )
+                                    } else {
+                                        exibirAlerta(
+                                            this@homeActivity,
+                                            "Saldo insuficiente. Por favor, digite um valor menor para o saque."
+                                        )
+                                    }
+                                }
+                            })
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                }
+            })
+
+            ref.child("saldo").addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    var saldoAtual: Double? = dataSnapshot.getValue(Double::class.java)
+                    if (saldoAtual != null) {
+                        mensagemSaldo.text = "Seu saldo atual é: R$ $saldoAtual"
+                    }
+                }
+
                 override fun onCancelled(error: DatabaseError) {
                 }
             })
@@ -85,8 +148,15 @@ class homeActivity : AppCompatActivity() {
     fun depositar (path: DatabaseReference,saldoAtual: Double ,valorDeposito: Double){
         path.setValue(saldoAtual + valorDeposito)
     }
-
-    fun exibirPerguntaComCampoDeValor(context: Context, texto: String, titulo: String, callbackSucesso: (Double) -> Unit) {
+    fun sacar (path: DatabaseReference,saldoAtual: Double ,valorSaque: Double): Boolean{
+        if (valorSaque > saldoAtual){
+            return false
+        } else {
+            path.setValue(saldoAtual - valorSaque)
+            return true
+        }
+    }
+    fun exibirPerguntaComCampoDeValor(context: Context, texto: String, titulo: String, textoBotao: String, callbackSucesso: (Double) -> Unit) {
         val alertDialog = AlertDialog.Builder(context)
             .setTitle(titulo)
             .setMessage(texto)
@@ -95,7 +165,7 @@ class homeActivity : AppCompatActivity() {
             campoValor.inputType = android.text.InputType.TYPE_CLASS_NUMBER
             alertDialog.setView(campoValor)
 
-            .setPositiveButton("Depositar") { dialog, _ ->
+            .setPositiveButton(textoBotao) { dialog, _ ->
                 // Ação a ser executada ao pressionar o botão "OK"
                 dialog.dismiss()
                 if (campoValor.text.toString().isNullOrEmpty()){
@@ -110,29 +180,6 @@ class homeActivity : AppCompatActivity() {
             .create()
         alertDialog.show()
     }
-
-
-    fun exibirAlertaComCampoValor(
-        context: Context,
-        sucessoCallback: (Double) -> Unit
-    ) {
-        val builder = AlertDialog.Builder(context)
-        builder.setTitle("Digite um valor")
-        builder.setMessage("Digite um valor:")
-
-        val input = EditText(context)
-        input.inputType = android.text.InputType.TYPE_CLASS_NUMBER
-        builder.setView(input)
-
-        builder.setPositiveButton("OK") { dialog, _ ->
-            val userInput = input.text.toString().toDouble()
-            sucessoCallback(userInput)
-            dialog.dismiss()
-        }
-
-        builder.show()
-    }
-
     fun exibirAlerta(context: Context, texto: String) {
         val alertDialog = AlertDialog.Builder(context)
             .setTitle("Alerta")
